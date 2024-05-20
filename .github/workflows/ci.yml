@@ -70,4 +70,4 @@ jobs:
         run: helm lint ./helm/my-application
 
       - name: Helm Test
-        run: helm test my-application -n kiratech-test
+        run: helm test my-application -n kiratech-test. 

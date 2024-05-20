@@ -15,23 +15,22 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Install VirtualBox
+      - name: Install Docker
         run: |
           sudo apt-get update
-          sudo apt-get install -y virtualbox
+          sudo apt-get install -y docker.io
+          sudo systemctl start docker
+          sudo systemctl enable docker
 
-      - name: Install Vagrant
+      - name: Install Minikube
         run: |
-          sudo apt-get update
-          sudo apt-get install -y vagrant
+          curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+          chmod +x minikube
+          sudo mv minikube /usr/local/bin/
 
-      - name: Init Vagrant
+      - name: Start Minikube
         run: |
-          vagrant init
-
-      - name: Set up Vagrant
-        run: |
-          vagrant up
+          sudo minikube start --driver=docker
 
   terraform:
     runs-on: ubuntu-latest
@@ -54,8 +53,7 @@ jobs:
         run: terraform validate
 
       - name: Run terraform apply
-        run: terraform apply
-
+        run: terraform apply -auto-approve
 
   helm:
     runs-on: ubuntu-latest

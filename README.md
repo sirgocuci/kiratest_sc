@@ -29,10 +29,6 @@ Il progetto utilizza Vagrant per la configurazione delle Virtual Machines, Ansib
 - **Creazione del namespace Kubernetes**: Utilizzo del resource "kubernetes_namespace" per creare il namespace "kiratech-test" per l'applicazione.
 - **Deploy del benchmark di sicurezza**: Utilizzo di resource "null_resource" per applicare il job.yaml che esegue il benchmark di sicurezza con kube-bench.
 
-### Job.yaml
-- **Configurazione del job**: Utilizzo di un job Kubernetes per eseguire il benchmark di sicurezza con kube-bench.
-- **Mount dei volumi**: Montaggio dei volumi necessari per il benchmark, come var-lib-cni, var-lib-etcd, etc.
-
 ### Values.yaml di Helm
 - **Configurazione dei servizi**: Definizione dei servizi dell'applicazione, incluso il nome e la porta.
 - **Abilitazione dell'autoscaling**: Configurazione dell'autoscaling per garantire una scalabilità dinamica in base al carico.

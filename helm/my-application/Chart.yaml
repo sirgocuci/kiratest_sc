@@ -1,0 +1,7 @@
+apiVersion: v2
+name: my-application
+description: A Helm chart for deploying a multi-service application
+
+type: application
+version: 0.1.0
+appVersion: "1.0.0"

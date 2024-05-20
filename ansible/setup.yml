@@ -1,0 +1,62 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+    # Install system dependencies
+    - name: Installare dipendenze di sistema
+      apt:
+        name:
+          - curl
+          - apt-transport-https
+          - ca-certificates
+          - software-properties-common
+        state: present
+        update_cache: yes
+
+    # Add Docker GPG key
+    - name: Aggiungere la chiave GPG di Docker
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    # Install kubectl
+    - name: Installare kubectl
+      shell: |
+        curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+        sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+
+    # Install kubelet
+    - name: Installare kubelet
+      shell: |
+        curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubelet"
+        sudo install -o root -g root -m 0755 kubelet /usr/local/bin/kubelet
+    
+    # Install kubeadm
+    - name: Installare kubeadm
+      shell: |
+        curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubeadm"
+        sudo install -o root -g root -m 0755 kubeadm /usr/local/bin/kubeadm
+
+    # Add Docker repository
+    - name: Aggiungere il repository di Docker
+      apt_repository:
+        repo: deb https://download.docker.com/linux/ubuntu bionic stable
+        state: present
+
+    # Install Docker
+    - name: Installare Docker
+      apt:
+        name: docker-ce
+        state: present
+
+    # Add vagrant user to docker group
+    - name: Aggiungere l'utente vagrant al gruppo docker
+      user:
+        name: vagrant
+        groups: docker
+        append: yes
+
+    # Disable swap
+    - name: Disabilitare lo swap
+      command: swapoff -a
+      when: ansible_virtualization_role == "guest"

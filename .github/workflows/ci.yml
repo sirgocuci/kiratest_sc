@@ -1,0 +1,71 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install VirtualBox
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y virtualbox
+
+      - name: Install Vagrant
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y vagrant
+
+      - name: Set up Vagrant
+        run: |
+          vagrant up
+
+  terraform:
+    runs-on: ubuntu-latest
+    needs: setup
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install pip
+        run: sudo apt-get install python3-pip
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 1.0.0
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Validate
+        run: terraform validate
+
+      - name: Run terraform apply
+        run: terraform apply
+
+
+  helm:
+    runs-on: ubuntu-latest
+    needs: setup
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v1
+        with:
+          version: v3.5.4
+
+      - name: Helm Lint
+        run: helm lint ./helm/my-application
+
+      - name: Helm Test
+        run: helm test my-application -n kiratech-test
